@@ -21,3 +21,5 @@ SELECT salary,COUNT(*) AS 'TOTAL' FROM employee GROUP BY salary;
 SELECT * FROM student;
 
 SELECT subject,SUM(salary) AS 'Total Salary', AVG(salary) AS 'Average Salary',MAX(salary) AS 'Maximum Salary',MIN(salary) AS 'Minimum Salary'  FROM student GROUP BY subject;  
+
+SELECT * FROM employee WHERE salary > 5000;
