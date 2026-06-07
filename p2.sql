@@ -1,78 +1,67 @@
-SHOW DATABASES;
-USE riya;
-SELECT * FROM employee;
-
-SELECT COUNT(*) AS 'Total_employee',COUNT(salary) AS 'Non-null salaries' , COUNT(DISTINCT salary) AS 'Unique salary' FROM employee;
-
-SELECT SUM(salary) AS 'Total Salary', SUM(DISTINCT salary) AS 'Total Unique Salary' FROM employee; 
-
-SELECT ROUND(AVG(salary),2)AS 'Average Salary', ROUND(AVG(DISTINCT salary),2)AS 'Averagr Unique Salary' FROM employee; 
-
-SELECT MAX(salary) AS 'Maximum Salary',MIN(salary) AS 'Minimum Salary' FROM employee;
-
+USE lms;
 SHOW TABLES;
 
-CREATE  TABLE IF NOT EXISTS details(sid INT  PRIMARY KEY AUTO_INCREMENT,name VARCHAR(20),address VARCHAR(20));
+DESCRIBE Authors;
+DESCRIBE Books;
+DESCRIBE Members;
+DESCRIBE Borrowrecords;
 
-DROP TABLE details;
+INSERT INTO Authors (author_name, phone) 
+VALUES ('J.K. Rowling', '123-456-7890'),
+       ('George R.R. Martin', '987-654-3210'),
+       ('Agatha Christie', '555-555-5555');
 
-USE setops_practice;
+INSERT INTO Books (title, genre, price, publication_year, author_id, stock) 
+VALUES ('Harry Potter and the Sorcerer''s Stone', 'Fiction', 19.99, 1997, 1, 10),
+       ('A Game of Thrones', 'Fiction', 29.99, 1996, 2, 5),
+       ('Murder on the Orient Express', 'Fiction', 14.99, 1934, 3, 7);
 
-SHOW TABLES;
+INSERT INTO Members (full_name,email,phone,join_date)
+VALUES ('John Doe', 'john.doe@example.com', '555-1234', '2023-01-01'),
+       ('Jane Smith', 'jane.smith@example.com', '555-5678', '2023-01-02'),
+       ('Bob Johnson', 'bob.johnson@example.com', '555-9012', '2023-01-03');
 
-SELECT customer_id FROM borrower
-UNION
-SELECT customer_id FROM depositor ORDER BY customer_id;
+INSERT INTO Borrowrecords (member_id, book_id, borrow_date,return_date,fine) 
+VALUES (1, 1, '2023-01-15', NULL, 0.00),
+       (2, 2, '2023-01-16', NULL, 0.00),
+       (3, 3, '2023-01-17', NULL, 0.00);
 
-SELECT customer_id FROM borrower
-UNION ALL
-SELECT customer_id FROM depositor ORDER BY customer_id;
+INSERT INTO Borrowrecords (member_id, book_id, borrow_date,return_date,fine) 
+VALUES (1, 1, '2024-05-20', '2024-05-22', 0.00),
+       (2, 2, '2025-09-28', '2025-09-30', 0.00),
+       (3, 3, '2022-02-17', '2022-02-20', 0.00);
 
-SELECT customer_id FROM borrower
-INTERSECT
-SELECT customer_id FROM depositor;
+INSERT INTO Books(title, genre, price, author_id) 
+VALUES ('The Hobbit', 'Fiction', 12.99, 1);
 
-SELECT customer_id FROM borrower
-EXCEPT
-SELECT customer_id FROM depositor ORDER BY customer_id;
+INSERT INTO members (full_name, email)
+VALUES ('Alice Brown', 'alice.brown@example.com'); 
 
-USE riya;
+INSERT INTO Books (title, genre, price, publication_year, author_id, stock) 
+VALUES ('The Foundation', 'Science Fiction', -5.00, 1951, 2, 8);
 
-SELECT subject,count(salary) FROM student GROUP BY subject;
+INSERT INTO Books (title, genre, price, publication_year, author_id, stock) 
+VALUES ('The Foundation', 'Comics', 5.00, 1951, 2, 8);
 
-SELECT subject,year,AVG(salary) FROM student GROUP BY subject,year HAVING AVG(salary)> 40000;
+INSERT INTO members (full_name, email,phone)
+VALUES ('Charlie Green', 'charlie.green@example.com', '555-555-5555'),
+('John Doe', 'charlie.green@example.com', '555-1234');
 
-SELECT subject,year,AVG(salary) FROM student GROUP BY subject,year HAVING AVG(salary)> 40000 ORDER BY AVG(salary) ASC;
+UPDATE Authors SET phone='111-111-1111' WHERE author_name='J.K. Rowling';
+UPDATE Books SET price=price * 1.10 WHERE genre='Fiction';
+UPDATE Borrowrecords SET return_date = '2024-07-25' WHERE member_id = 3;
+UPDATE Books SET stock=5 WHERE price > 300;
+UPDATE members SET phone='909-090-9090', email='janesmith@gmail.com' WHERE full_name='Jane Smith';
 
-USE PRACTICE;
-SELECT * FROM student;
-SELECT * FROM marks;
+DELETE FROM borrowrecords WHERE member_id=1;
+DELETE FROM borrowrecords WHERE return_date=NULL;
+DELETE FROM Books WHERE stock=0;
+DELETE FROM Members WHERE email='bob.johnson@example.com';
 
-SELECT name,marks 
-FROM student
-INNER JOIN marks
-ON student.id=marks.id;
+DELETE FROM Authors WHERE author_name='Agatha Christie';
 
-SELECT name,marks 
-FROM student
-LEFT JOIN marks
-ON student.id=marks.id;
+SELECT * FROM Books;
+SELECT * FROM Authors;
+SELECT * FROM Members;
+SELECT * FROM Borrowrecords;
 
-SELECT name,marks 
-FROM student
-RIGHT JOIN marks
-ON student.id=marks.id;
-
--- full can't used
-SELECT name,marks 
-FROM student
-LEFT JOIN marks ON student.id=marks.id
-UNION
-SELECT name,marks 
-FROM student
-RIGHT JOIN marks ON student.id=marks.id;
-
-
-SELECT name
-FROM student
-WHERE id IN (SELECT id FROM marks WHERE marks>70);

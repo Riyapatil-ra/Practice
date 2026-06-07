@@ -1,25 +1,64 @@
-SHOW DATABASES;
+CREATE DATABASE IF NOT EXISTS lms;
+USE lms;
 
-USE riya;
+CREATE TABLE IF NOT EXISTS Authors (
+    AuthorID INT PRIMARY KEY AUTO_INCREMENT,
+    author_name VARCHAR(255) NOT NULL,
+    nationality VARCHAR(100)
+);
 
-SHOW TABLES;
+CREATE TABLE IF NOT EXISTS Books (
+    BookID INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    genre VARCHAR(100) CHECK (genre IN ('Fiction', 'Non-Fiction', 'Science', 'History')),
+    price DECIMAL(10, 2) CHECK (price > 0),
+    publication_year YEAR,
+    author_id INT,
+    FOREIGN KEY (author_id) REFERENCES Authors(AuthorID) ON DELETE SET NULL
+);
 
-SELECT * FROM departments;
+CREATE TABLE IF NOT EXISTS Members (
+    MemberID INT PRIMARY KEY AUTO_INCREMENT,
+    member_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    phone VARCHAR(20),
+    join_date DATE DEFAULT (CURRENT_DATE)
+);
 
-SELECT * FROM departments WHERE building = 'Block A';
+CREATE TABLE IF NOT EXISTS  Borrow(
+    BorrowID INT PRIMARY KEY AUTO_INCREMENT,
+    member_id INT,
+    book_id INT,
+    borrow_date DATE NOT NULL,
+    return_date DATE,
+    CHECK (return_date IS NULL OR return_date >= borrow_date),
+    FOREIGN KEY (member_id) REFERENCES Members(MemberID),
+    FOREIGN KEY (book_id) REFERENCES Books(BookID)
+);
 
-UPDATE departments SET department_name='Mathematics' WHERE department_id=6;
+ALTER TABLE Authors ADD COLUMN phone VARCHAR(20);
+ALTER TABLE Books ADD COLUMN stock INT DEFAULT 0 CHECK (stock >= 0);
 
-INSERT INTO departments VALUES (11,'Power Point','Buliding B','Dr. Jones');
+ALter  TABLE Authors Modify author_name VARCHAR(500) NOT NULL;
+ALTER TABLE Members MODIFY phone VARCHAR(15);
 
-SELECT * FROM departments;
+ALTER TABLE Members RENAME COLUMN member_name TO full_name;
 
-SELECT * FROM employee;
+ALTER TABLE Borrow RENAME TO Borrowrecords;
 
-SELECT salary,COUNT(*) AS 'TOTAL' FROM employee GROUP BY salary;
+ALTER TABLE Authors DROP COLUMN nationality;
 
-SELECT * FROM student;
+SHOW CREATE TABLE books;
 
-SELECT subject,SUM(salary) AS 'Total Salary', AVG(salary) AS 'Average Salary',MAX(salary) AS 'Maximum Salary',MIN(salary) AS 'Minimum Salary'  FROM student GROUP BY subject;  
+ALTER TABLE Books DROP CONSTRAINT books_chk_1;
 
-SELECT * FROM employee WHERE salary > 5000;
+ALTER TABLE Members MODIFY phone VARCHAR(15) NOT NULL;
+
+ALTER TABLE borrowrecords ADD COLUMN fine DECIMAL(10, 2) DEFAULT 0 CHECK (fine >= 0);
+
+DROP TABLE IF EXISTS borrowrecords;
+
+SeLECT * FROM books;
+
+TRUNCATE TABLE books;
+
